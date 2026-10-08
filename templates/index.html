@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div>
+    <h1>Your tasks</h1>
+    <p class="muted">{{ stats.done }} of {{ stats.total }} completed</p>
+  </div>
+  <div class="progress" role="progressbar" aria-valuenow="{{ pct }}" aria-valuemin="0" aria-valuemax="100">
+    <div class="bar" style="width: {{ pct }}%"></div>
+    <span>{{ pct }}%</span>
+  </div>
+</section>
+
+<section class="card">
+  <form method="post" action="{{ url_for('add') }}" class="grid-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input name="title" placeholder="What needs to be done?" maxlength="100" required class="span-2">
+    <select name="priority">
+      {% for p in priorities %}<option {{ 'selected' if p == 'Medium' }}>{{ p }}</option>{% endfor %}
+    </select>
+    <input type="date" name="due_date">
+    <textarea name="description" placeholder="Notes (optional)" rows="2" class="span-3"></textarea>
+    <button class="btn" type="submit">＋ Add task</button>
+  </form>
+</section>
+
+<section class="toolbar">
+  <div class="tabs">
+    {% for key, label in (('all','All'),('active','Active'),('done','Done')) %}
+      <a href="{{ url_for('index', filter=key, q=q) }}" class="tab {{ 'active' if flt == key }}">{{ label }}</a>
+    {% endfor %}
+  </div>
+  <form method="get" class="search">
+    <input type="hidden" name="filter" value="{{ flt }}">
+    <input name="q" value="{{ q }}" placeholder="Search…">
+  </form>
+</section>
+
+<section class="list">
+  {% for t in tasks %}
+  <article class="task card {{ 'is-done' if t.done }}">
+    <form method="post" action="{{ url_for('toggle', task_id=t.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="check" aria-label="Toggle complete">{{ '✓' if t.done }}</button>
+    </form>
+    <div class="body">
+      <h3>{{ t.title }}</h3>
+      {% if t.description %}<p class="muted">{{ t.description }}</p>{% endif %}
+      <div class="meta">
+        <span class="badge {{ t.priority|lower }}">{{ t.priority }}</span>
+        {% if t.due_date %}<span class="muted">📅 {{ t.due_date }}</span>{% endif %}
+      </div>
+    </div>
+    <div class="actions">
+      <a class="icon-btn" href="{{ url_for('edit', task_id=t.id) }}" aria-label="Edit">✏️</a>
+      <form method="post" action="{{ url_for('delete', task_id=t.id) }}" data-confirm="Delete this task?">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="icon-btn" aria-label="Delete">🗑️</button>
+      </form>
+    </div>
+  </article>
+  {% else %}
+  <div class="card empty">
+    <div class="emoji">🗂️</div>
+    <h3>Nothing here yet</h3>
+    <p class="muted">Add your first task above.</p>
+  </div>
+  {% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TaskFlow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script>document.documentElement.dataset.theme = localStorage.getItem('theme') || 'light';</script>
+</head>
+<body>
+  <header class="nav">
+    <a href="{{ url_for('index') }}" class="brand">✦ TaskFlow</a>
+    <button id="themeToggle" class="icon-btn" aria-label="Toggle theme">🌓</button>
+  </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="toasts">
+          {% for cat, msg in messages %}
+            <div class="toast {{ cat }}">{{ msg }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% if not_found %}
+      <section class="card empty">
+        <h1>404</h1><p>That page doesn't exist.</p>
+        <a class="btn" href="{{ url_for('index') }}">Go home</a>
+      </section>
+    {% else %}
+      {% block content %}{% endblock %}
+    {% endif %}
+  </main>
+
+  <footer class="footer">Built with Flask &amp; Python 3</footer>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

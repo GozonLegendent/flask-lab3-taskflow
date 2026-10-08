@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card narrow">
+  <h1>Edit task</h1>
+  <form method="post" class="stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Title <input name="title" value="{{ task.title }}" maxlength="100" required></label>
+    <label>Notes <textarea name="description" rows="3">{{ task.description }}</textarea></label>
+    <div class="row">
+      <label>Priority
+        <select name="priority">
+          {% for p in priorities %}<option {{ 'selected' if p == task.priority }}>{{ p }}</option>{% endfor %}
+        </select>
+      </label>
+      <label>Due date <input type="date" name="due_date" value="{{ task.due_date or '' }}"></label>
+    </div>
+    <div class="row end">
+      <a class="btn ghost" href="{{ url_for('index') }}">Cancel</a>
+      <button class="btn" type="submit">Save changes</button>
+    </div>
+  </form>
+</section>
+{% endblock %}
