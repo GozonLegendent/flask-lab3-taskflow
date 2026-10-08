@@ -2,7 +2,7 @@
 {% block content %}
 <section class="hero">
   <div>
-    <h1>Your tasks</h1>
+    <h1>My Tasks</h1>
     <p class="muted">{{ stats.done }} of {{ stats.total }} completed</p>
   </div>
   <div class="progress" role="progressbar" aria-valuenow="{{ pct }}" aria-valuemin="0" aria-valuemax="100">
@@ -11,18 +11,19 @@
   </div>
 </section>
 
-<section class="card">
-  <form method="post" action="{{ url_for('add') }}" class="grid-form">
+<form method="post" action="{{ url_for('add') }}">
+  <fieldset class="group grid-form">
+    <legend>New task</legend>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <input name="title" placeholder="What needs to be done?" maxlength="100" required class="span-2">
+    <input name="title" placeholder="What needs to be done?" maxlength="100" required>
     <select name="priority">
       {% for p in priorities %}<option {{ 'selected' if p == 'Medium' }}>{{ p }}</option>{% endfor %}
     </select>
     <input type="date" name="due_date">
-    <textarea name="description" placeholder="Notes (optional)" rows="2" class="span-3"></textarea>
-    <button class="btn" type="submit">＋ Add task</button>
-  </form>
-</section>
+    <textarea name="description" placeholder="Notes (optional)" rows="2" class="full"></textarea>
+    <button class="btn green full" type="submit">&#43; Add task</button>
+  </fieldset>
+</form>
 
 <section class="toolbar">
   <div class="tabs">
@@ -32,36 +33,36 @@
   </div>
   <form method="get" class="search">
     <input type="hidden" name="filter" value="{{ flt }}">
-    <input name="q" value="{{ q }}" placeholder="Search…">
+    <input name="q" value="{{ q }}" placeholder="Search tasks...">
   </form>
 </section>
 
 <section class="list">
   {% for t in tasks %}
-  <article class="task card {{ 'is-done' if t.done }}">
+  <article class="task {{ 'is-done' if t.done }}">
     <form method="post" action="{{ url_for('toggle', task_id=t.id) }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <button class="check" aria-label="Toggle complete">{{ '✓' if t.done }}</button>
+      <button class="check" aria-label="Toggle complete">{{ '&#10003;'|safe if t.done }}</button>
     </form>
     <div class="body">
       <h3>{{ t.title }}</h3>
       {% if t.description %}<p class="muted">{{ t.description }}</p>{% endif %}
       <div class="meta">
         <span class="badge {{ t.priority|lower }}">{{ t.priority }}</span>
-        {% if t.due_date %}<span class="muted">📅 {{ t.due_date }}</span>{% endif %}
+        {% if t.due_date %}<span class="muted">Due {{ t.due_date }}</span>{% endif %}
       </div>
     </div>
     <div class="actions">
-      <a class="icon-btn" href="{{ url_for('edit', task_id=t.id) }}" aria-label="Edit">✏️</a>
+      <a class="btn silver small" href="{{ url_for('edit', task_id=t.id) }}">Edit</a>
       <form method="post" action="{{ url_for('delete', task_id=t.id) }}" data-confirm="Delete this task?">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button class="icon-btn" aria-label="Delete">🗑️</button>
+        <button class="btn red small">Delete</button>
       </form>
     </div>
   </article>
   {% else %}
-  <div class="card empty">
-    <div class="emoji">🗂️</div>
+  <div class="empty">
+    <div class="big-orb">&#10003;</div>
     <h3>Nothing here yet</h3>
     <p class="muted">Add your first task above.</p>
   </div>

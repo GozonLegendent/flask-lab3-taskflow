@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="card narrow">
-  <h1>Edit task</h1>
-  <form method="post" class="stack">
+<h1>Edit task</h1>
+<form method="post">
+  <fieldset class="group stack">
+    <legend>Task details</legend>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label>Title <input name="title" value="{{ task.title }}" maxlength="100" required></label>
     <label>Notes <textarea name="description" rows="3">{{ task.description }}</textarea></label>
@@ -15,9 +16,9 @@
       <label>Due date <input type="date" name="due_date" value="{{ task.due_date or '' }}"></label>
     </div>
     <div class="row end">
-      <a class="btn ghost" href="{{ url_for('index') }}">Cancel</a>
-      <button class="btn" type="submit">Save changes</button>
+      <a class="btn silver" href="{{ url_for('index') }}">Cancel</a>
+      <button class="btn green" type="submit">Save changes</button>
     </div>
-  </form>
-</section>
+  </fieldset>
+</form>
 {% endblock %}
